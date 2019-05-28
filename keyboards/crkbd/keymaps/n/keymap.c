@@ -21,28 +21,37 @@ extern uint8_t is_master;
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
-#define _QWERTY 0
-#define _LOWER 1
-#define _RAISE 2
-#define _ADJUST 3
+enum layers {
+  L_DEFAULT= 0,
+  L_XLL,
+  L_XLM,
+  L_XLR,
+  L_XRL,
+  L_XRM,
+  L_XRR,
+  L_XLM_XRM,
+};
 
 enum custom_keycodes {
-  QWERTY = SAFE_RANGE,
-  LOWER,
-  RAISE,
-  ADJUST,
+  DEFAULT = SAFE_RANGE,
+  XLR,
+  XLM,
+  XRL,
+  XRM,
+  XRR,
   BACKLIT,
   RGBRST
 };
 
-enum macro_keycodes {
-  KC_SAMPLEMACRO,
-};
-
 #define KC______ KC_TRNS
 #define KC_XXXXX KC_NO
-#define KC_LOWER LOWER
-#define KC_RAISE RAISE
+
+#define KC_XLL KC_LALT
+#define KC_XLM LT(L_XLM, KC_SPACE)
+#define KC_XLR MT(MOD_LGUI, KC_LANG2)
+#define KC_XRL MT(MOD_RGUI, KC_LANG1)
+#define KC_XRM LT(L_XRM, DEFAULT)
+#define KC_XRR   LT(L_XRR, KC_F7)
 #define KC_RST   RESET
 #define KC_LRST  RGBRST
 #define KC_LTOG  RGB_TOG
@@ -54,57 +63,100 @@ enum macro_keycodes {
 #define KC_LVAD  RGB_VAD
 #define KC_LMOD  RGB_MOD
 #define KC_CTLTB CTL_T(KC_TAB)
-#define KC_GUIEI GUI_T(KC_LANG2)
-#define KC_ALTKN ALT_T(KC_LANG1)
+#define KC_CMD_S CTL_T(KC_TAB)
+#define KC_LG(kc) LGUI(KC_##kc)
+#define KC_LS(kc) LSFT(KC_##kc)
+#define KC_CU KC_UP
+#define KC_CD KC_DOWN
+#define KC_CL KC_LEFT
+#define KC_CR KC_RIGHT
+#define KC_PU KC_PGUP
+#define KC_PD KC_PGDN
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [_QWERTY] = LAYOUT_kc( \
+  [L_DEFAULT] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,     Q,     W,     E,     R,     T,                      Y,     U,     I,     O,     P,  BSPC,\
+        ESC,     X,     W,     L,     Z,     J,                      Q,     G,     H,     C,     Y,  SLSH,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB,     A,     S,     D,     F,     G,                      H,     J,     K,     L,  SCLN,  QUOT,\
+      CTLTB,     O,     I,     E,     A,     F,                      B,     T,     R,     N,     S,  MINS,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,     Z,     X,     C,     V,     B,                      N,     M,  COMM,   DOT,  SLSH,  RSFT,\
+       LSFT,  SCLN,   DOT,     K,     U,    AT,                      D,     M,     P,     V,  COMM,  RSFT,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                    XLL,   XLM,   XLR,      XRL,   XRM,   XRR \
                               //`--------------------'  `--------------------'
   ),
 
-  [_LOWER] = LAYOUT_kc( \
+  [L_XLM] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,     1,     2,     3,     4,     5,                      6,     7,     8,     9,     0,  BSPC,\
+        ESC, XXXXX, XXXXX,  MS_U, XXXXX, XXXXX,                  XXXXX,  AMPR,  RPRN,   GRV,  ASTR,  QUES,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB,    F1,    F2,    F3,    F4,    F5,                     F6,    F7,    F8,    F9,   F10, XXXXX,\
+      CTLTB, XXXXX,  MS_L,  MS_D,  MS_R, MS_BTN3,                QUOTE,  LPRN,  LCBR,  RCBR,   EQL,  UNDS,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20, XXXXX,\
+       LSFT,   BTN2,  WH_D, WH_U,  BTN1, XXXXX,                     AT,   DQT,  PLUS,  HASH,  EXLM, XXXXX,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  _____, _____, _____,   _____, _____, _____ \
                               //`--------------------'  `--------------------'
   ),
 
-  [_RAISE] = LAYOUT_kc( \
+  [L_XLR] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,  EXLM,    AT,  HASH,   DLR,  PERC,                   CIRC,  AMPR,  ASTR,  LPRN,  RPRN,  BSPC,\
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   MINS,   EQL,  LCBR,  RCBR,  PIPE,   GRV,\
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  _____, _____, _____,   _____, _____, _____ \
                               //`--------------------'  `--------------------'
   ),
 
-  [_ADJUST] = LAYOUT_kc( \
+  [L_XRL] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
-        RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+      _____, _____, _____, _____, _____, _____,                 _____, _____, _____, _____, _____, _____,\
+  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                  _____, _____, _____,   _____, _____, _____ \
+                              //`--------------------'  `--------------------'
+  ),
+
+  [L_XRM] = LAYOUT_kc( \
+  //,-----------------------------------------.                ,-----------------------------------------.
+        ESC, XXXXX, XXXXX,    UP, XXXXX, XXXXX,                   XXXXX,  AMPR,  HOME, PGUP, XXXXX,  BSPC,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+      CTLTB, XXXXX,  LEFT,  DOWN, RIGHT, XXXXX,                   BSPC,   DEL,   END,  PGDN,   ENT,   GRV,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+       LSFT, XXXXX,  COLN, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  LSFT,  TILD,\
+  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                  _____, _____, _____,   _____, _____, _____ \
+                              //`--------------------'  `--------------------'
+  ),
+
+  [L_XRR] = LAYOUT_kc( \
+  //,-----------------------------------------.                ,-----------------------------------------.
+        RST, XXXXX, XXXXX,    UP, XXXXX, XXXXX,                  XXXXX,  KP_7,  KP_8,  KP_9, XXXXX, XXXXX,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+       LTOG,  LHUI,  LEFT,  DOWN, RIGHT, XXXXX,                   BSPC,  KP_4,  KP_5,  KP_6, XXXXX, XXXXX,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+       LSFT,  LHUD,   DOT,  LVAD, XXXXX, XXXXX,                   KP_0,  KP_1,  KP_2,  KP_3, XXXXX, XXXXX,\
+  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                  _____, _____, _____,   _____, _____, _____ \
+                              //`--------------------'  `--------------------'
+  ),
+
+  [L_XLM_XRM] = LAYOUT_kc( \
+  //,-----------------------------------------.                ,-----------------------------------------.
+        RST,  LRST, XXXXX,LS(CU), XXXXX, XXXXX,                  XXXXX, XXXXX,LS(HOME),LS(PU), XXXXX, XXXXX,\
+      //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+       LTOG,  LHUI,LS(CL),LS(CD),LS(CR), XXXXX,                  XXXXX, XXXXX,LS(END),LS(PD), XXXXX, XXXXX,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  _____, _____, _____,   _____, _____, _____ \
                               //`--------------------'  `--------------------'
-  )
+  ),
 };
 
 int RGB_current_mode;
@@ -114,12 +166,27 @@ void persistent_default_layer_set(uint16_t default_layer) {
   default_layer_set(default_layer);
 }
 
+bool layer_on_if_need(uint8_t layer){
+  if(!IS_LAYER_ON(layer)){
+    layer_on(layer);
+    return true;
+  }
+  return false;
+}
+bool layer_off_if_need(uint8_t layer){
+  if(IS_LAYER_ON(layer)){
+    layer_off(layer);
+    return true;
+  }
+  return false;
+}
+
 // Setting ADJUST layer RGB back to default
 void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
   if (IS_LAYER_ON(layer1) && IS_LAYER_ON(layer2)) {
-    layer_on(layer3);
+    layer_on_if_need(layer3);
   } else {
-    layer_off(layer3);
+    layer_off_if_need(layer3);
   }
 }
 
@@ -143,10 +210,10 @@ void set_keylog(uint16_t keycode, keyrecord_t *record);
 const char *read_keylog(void);
 const char *read_keylogs(void);
 
-// const char *read_mode_icon(bool swap);
-// const char *read_host_led_state(void);
-// void set_timelog(void);
-// const char *read_timelog(void);
+const char *read_mode_icon(bool swap);
+const char *read_host_led_state(void);
+//void set_timelog(void);
+//const char *read_timelog(void);
 
 void matrix_scan_user(void) {
    iota_gfx_task();
@@ -157,12 +224,14 @@ void matrix_render_user(struct CharacterMatrix *matrix) {
     // If you want to change the display of OLED, you need to change here
     matrix_write_ln(matrix, read_layer_state());
     matrix_write_ln(matrix, read_keylog());
-    matrix_write_ln(matrix, read_keylogs());
-    //matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
-    //matrix_write_ln(matrix, read_host_led_state());
-    //matrix_write_ln(matrix, read_timelog());
+//    matrix_write_ln(matrix, read_keylogs());
+//    matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
+//    matrix_write_ln(matrix, read_host_led_state());
+//    matrix_write_ln(matrix, read_timelog());
   } else {
-    matrix_write(matrix, read_logo());
+    matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
+    matrix_write_ln(matrix, read_host_led_state());
+//    matrix_write(matrix, read_logo());
   }
 }
 
@@ -181,49 +250,92 @@ void iota_gfx_task_user(void) {
 }
 #endif//SSD1306OLED
 
+uint16_t _lastKeyCode;
+bool _isOneShot;
+bool isOneShot(void){  return _isOneShot; }
+bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record);
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
 #ifdef SSD1306OLED
     set_keylog(keycode, record);
 #endif
-    // set_timelog();
+//     set_timelog();
   }
 
+  _isOneShot=_lastKeyCode==keycode;
+  bool result = process_record_user_wrapped(keycode,record);
+  _lastKeyCode=keycode;
+
+  return result;
+}
+
+bool isShifted(void) {
+ return get_mods() & (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT));
+}
+
+bool isControl(void) {
+ return get_mods() & (MOD_BIT(KC_LCTRL) | MOD_BIT(KC_RCTRL));
+}
+
+void registerOrUnRegister(uint16_t keycode, bool isRegister){
+  isRegister ? register_code(keycode) : unregister_code(keycode);
+}
+
+bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
+
+  bool isPressed = record->event.pressed;
+
   switch (keycode) {
-    case QWERTY:
+    case DEFAULT:
       if (record->event.pressed) {
-        persistent_default_layer_set(1UL<<_QWERTY);
+        persistent_default_layer_set(1UL<<L_DEFAULT);
       }
       return false;
       break;
-    case LOWER:
-      if (record->event.pressed) {
-        layer_on(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
-      } else {
-        layer_off(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+
+    case KC_XLM:
+      record->event.pressed ? layer_on_if_need(L_XLM) : layer_off_if_need(L_XLM);
+      update_tri_layer_RGB(L_XRM, L_XLM, L_XLM_XRM);
+
+      if( !isPressed && isOneShot() ) {
+          if(IS_LAYER_ON(L_XRM)) {
+              register_code(KC_LANG2);
+              unregister_code(KC_LANG2);
+              return false;
+          } else if( !layer_state_is(L_XLM) ) {
+              register_code(KC_SPACE);
+              unregister_code(KC_SPACE);
+              return false;
+          }
       }
-      return false;
+      return true;
+    case KC_XLR:
+      record->event.pressed ? layer_on_if_need(L_XLR) : layer_off_if_need(L_XLR);
       break;
-    case RAISE:
-      if (record->event.pressed) {
-        layer_on(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
-      } else {
-        layer_off(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+    case KC_XRM:
+      record->event.pressed ? layer_on_if_need(L_XRM) : layer_off_if_need(L_XRM);
+      update_tri_layer_RGB(L_XRM, L_XLM, L_XLM_XRM);
+
+      if(IS_LAYER_ON(L_XLM) && !isPressed && isOneShot()){
+         register_code(KC_LANG1);
+         unregister_code(KC_LANG1);
+      return false;
       }
-      return false;
       break;
-    case ADJUST:
-        if (record->event.pressed) {
-          layer_on(_ADJUST);
-        } else {
-          layer_off(_ADJUST);
-        }
-        return false;
+    case KC_XRL:
+        record->event.pressed ? layer_on_if_need(L_XRL) : layer_off_if_need(L_XRL);
         break;
+//    case KC_XRR:
+//      record->event.pressed ? layer_on_if_need(L_XRR) : layer_off_if_need(L_XRR);
+//      update_tri_layer_RGB(L_XLM, L_XRM, L_XLM_XRM);
+//      return false;
+//      break;
+//    case KC_XLM_XRM:
+//        record->event.pressed ? layer_on(L_XLM_XRM) : layer_off(L_XLM_XRM);
+//        update_tri_layer_RGB(L_XLM, L_XRM, L_XLM_XRM);
+//      return false;
+//      break;
     case RGB_MOD:
       #ifdef RGBLIGHT_ENABLE
         if (record->event.pressed) {
@@ -243,6 +355,88 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
       #endif
       break;
+
+    case KC_RPRN: // >
+        if (isShifted()) { registerOrUnRegister(KC_DOT,isPressed); return false; }
+       break;
+    case KC_LPRN: // <
+      if (isShifted()) { registerOrUnRegister(KC_COMMA,isPressed); return false; }
+       break;
+
+    case KC_LCBR: // [
+      if (isShifted()) {
+        isPressed ? del_mods(MOD_BIT(KC_LSFT)) : 0;
+        registerOrUnRegister(KC_LBRACKET,isPressed);
+        add_mods(MOD_BIT(KC_LSFT));
+        return false;
+      }
+      break;
+
+    case KC_RCBR: // ]
+      if (isShifted()) {
+        isPressed ? del_mods(MOD_BIT(KC_LSFT)) : 0;
+        registerOrUnRegister(KC_RBRACKET,isPressed);
+        add_mods(MOD_BIT(KC_LSFT));
+        return false;
+      }
+      break;
+    case KC_QUOTE: // %
+        if (isShifted()) { registerOrUnRegister(KC_5,isPressed); return false; }
+        break;
+    case KC_AT: // backslash
+        if (isShifted()) {
+          del_mods(MOD_BIT(KC_LSFT));
+          registerOrUnRegister(KC_BSLS,isPressed);
+          add_mods(MOD_BIT(KC_LSFT));
+          return false;
+        }
+        break;
+    case KC_HASH: // ^
+        if (isShifted()) {
+          registerOrUnRegister(KC_CIRC,isPressed);
+          return false;
+        }
+        break;
+    case KC_AMPR: // |
+        if (isShifted()) { registerOrUnRegister(KC_PIPE,isPressed); return false; }
+        return true;
+    case KC_KP_4:
+    case KC_KP_6:
+        if (isControl()) {
+          add_mods(MOD_BIT(KC_LALT)); add_mods(MOD_BIT(KC_LCTRL));
+          registerOrUnRegister(keycode, isPressed);
+          del_mods(MOD_BIT(KC_LALT));
+          return false;
+        }
+    case KC_KP_0:
+    case KC_KP_1:
+    case KC_KP_2:
+    case KC_KP_3:
+    case KC_KP_5:
+    case KC_KP_7:
+    case KC_KP_8:
+    case KC_KP_9:
+        if (IS_LAYER_ON(L_XLM)) {
+          add_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LCTRL));
+          registerOrUnRegister(keycode, isPressed);
+          del_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LCTRL));
+          return false;
+        }
+    case KC_CTLTB:
+        if (IS_LAYER_ON(L_XLM) && isOneShot() && !isPressed) {
+          registerOrUnRegister(KC_LALT, true);
+          registerOrUnRegister(KC_F3, true);
+          registerOrUnRegister(KC_F3, false);
+          registerOrUnRegister(KC_LALT, false);
+          registerOrUnRegister(KC_LCTRL, false);
+          return false;
+        } else if (IS_LAYER_ON(L_XLR) && isOneShot() && !isPressed) {
+          add_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
+          registerOrUnRegister(KC_TAB, true);
+          registerOrUnRegister(KC_TAB, false);
+          del_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
+          return false;
+        }
   }
   return true;
 }
