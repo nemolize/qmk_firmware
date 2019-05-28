@@ -116,6 +116,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #endif /* #ifndef MK_3_SPEED */
 
+#ifndef MOUSEKEY_FRAMERATE
+#define MOUSEKEY_FRAMERATE 60.0
+#endif
+#ifndef MOUSEKEY_GRAVITY
+#define MOUSEKEY_GRAVITY 9.8
+#endif
+#ifndef MOUSEKEY_CURSOR_FORCE
+#define MOUSEKEY_CURSOR_FORCE 1100
+#endif
+#ifndef MOUSEKEY_CURSOR_MASS
+#define MOUSEKEY_CURSOR_MASS 1
+#endif
+#ifndef MOUSEKEY_CURSOR_FRICTION
+#define MOUSEKEY_CURSOR_FRICTION 95
+#endif
+#ifndef MOUSEKEY_WHEEL_FORCE
+#define MOUSEKEY_WHEEL_FORCE 3
+#endif
+#ifndef MOUSEKEY_WHEEL_MASS
+#define MOUSEKEY_WHEEL_MASS .2
+#endif
+#ifndef MOUSEKEY_WHEEL_FRICTION
+#define MOUSEKEY_WHEEL_FRICTION 5
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
