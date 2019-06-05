@@ -34,7 +34,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define USE_SERIAL_PD2
 
 #define TAPPING_FORCE_HOLD
-#define TAPPING_TERM 100
+#define TAPPING_TERM -1
+#define RETRO_TAPPING    // Tap even if TAPPING_TERM has expired
+#define PERMISSIVE_HOLD  // Always the modified output
+//#define PREVENT_STUCK_MODIFIERS
+//#define TAP_DANCE_ENABLE
+//#undef IGNORE_MOD_TAP_INTERRUPT
+
+//#define ONESHOT_TIMEOUT 0
+//#define NO_ACTION_MACRO
+//#define NO_ACTION_FUNCTION
+//#define LINK_TIME_OPTIMIZATION_ENABLE
 
 #undef RGBLED_NUM
 #define RGBLIGHT_ANIMATIONS

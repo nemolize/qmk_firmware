@@ -47,10 +47,10 @@ enum custom_keycodes {
 #define KC_XXXXX KC_NO
 
 #define KC_XLL KC_LALT
-#define KC_XLM LT(L_XLM, KC_SPACE)
+#define KC_XLM XLM //LT(L_XLM, KC_SPACE)
 #define KC_XLR MT(MOD_LGUI, KC_LANG2)
 #define KC_XRL MT(MOD_RGUI, KC_LANG1)
-#define KC_XRM LT(L_XRM, DEFAULT)
+#define KC_XRM XRM
 #define KC_XRR   LT(L_XRR, KC_F7)
 #define KC_RST   RESET
 #define KC_LRST  RGBRST
@@ -204,10 +204,10 @@ void matrix_init_user(void) {
 #ifdef SSD1306OLED
 
 // When add source files to SRC in rules.mk, you can use functions.
-//const char *read_layer_state(void);
+const char *read_layer_state(void);
 //const char *read_logo(void);
-//void set_keylog(uint16_t keycode, keyrecord_t *record);
-//const char *read_keylog(void);
+void set_keylog(uint16_t keycode, keyrecord_t *record);
+const char *read_keylog(void);
 //const char *read_keylogs(void);
 
 //const char *read_mode_icon(bool swap);
@@ -222,8 +222,8 @@ void matrix_scan_user(void) {
 void matrix_render_user(struct CharacterMatrix *matrix) {
   if (is_master) {
     // If you want to change the display of OLED, you need to change here
-//    matrix_write_ln(matrix, read_layer_state());
-//    matrix_write_ln(matrix, read_keylog());
+    matrix_write_ln(matrix, read_layer_state());
+    matrix_write_ln(matrix, read_keylog());
 //    matrix_write_ln(matrix, read_keylogs());
 //    matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
 //    matrix_write_ln(matrix, read_host_led_state());
@@ -257,10 +257,10 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record);
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
-//#ifdef SSD1306OLED
-//    set_keylog(keycode, record);
-//#endif
+#ifdef SSD1306OLED
+    set_keylog(keycode, record);
 //     set_timelog();
+#endif
   }
 
   _isOneShot=_lastKeyCode==keycode;
@@ -320,7 +320,7 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
       if(IS_LAYER_ON(L_XLM) && !isPressed && isOneShot()){
          register_code(KC_LANG1);
          unregister_code(KC_LANG1);
-      return false;
+         return false;
       }
       break;
     case KC_XRL:
@@ -428,21 +428,30 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
           del_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LCTRL));
           return false;
         }
-    case KC_CTLTB:
-        if (IS_LAYER_ON(L_XLM) && isOneShot() && !isPressed) {
-          registerOrUnRegister(KC_LALT, true);
-          registerOrUnRegister(KC_F3, true);
-          registerOrUnRegister(KC_F3, false);
-          registerOrUnRegister(KC_LALT, false);
-          registerOrUnRegister(KC_LCTRL, false);
-          return false;
-        } else if (IS_LAYER_ON(L_XLR) && isOneShot() && !isPressed) {
-          add_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
-          registerOrUnRegister(KC_TAB, true);
-          registerOrUnRegister(KC_TAB, false);
-          del_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
-          return false;
-        }
+        break;
+//    case KC_CTLTB:
+//        if (IS_LAYER_ON(L_XLM) && isOneShot() && !isPressed) {
+//          registerOrUnRegister(KC_LALT, true);
+//          registerOrUnRegister(KC_F3, true);
+//          registerOrUnRegister(KC_F3, false);
+//          registerOrUnRegister(KC_LALT, false);
+//          registerOrUnRegister(KC_LCTRL, false);
+//          return false;
+//        } else if (IS_LAYER_ON(L_XLR) && isOneShot() && !isPressed) {
+//          add_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
+//          registerOrUnRegister(KC_TAB, true);
+//          registerOrUnRegister(KC_TAB, false);
+//          del_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
+//          return false;
+//        }
   }
   return true;
+}
+
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_enable=true;
+  debug_matrix=true;
+  //debug_keyboard=true;
+  //debug_mouse=true;
 }
