@@ -392,9 +392,11 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
         }
         break;
     case KC_PLUS: // $
-        if (isShifted()) {
-          registerOrUnRegister(KC_DOLLAR,isPressed);
+        if (isShifted() && isPressed) {
+          registerOrUnRegister(KC_DOLLAR, true);
           return false;
+        } else {
+          registerOrUnRegister(KC_DOLLAR, false);
         }
         break;
     case KC_HASH: // ^
