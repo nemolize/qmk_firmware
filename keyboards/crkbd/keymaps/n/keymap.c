@@ -381,14 +381,21 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
       }
       break;
     case KC_QUOTE: // %
-        if (isShifted()) { registerOrUnRegister(KC_5,isPressed); return false; }
+        if (isShifted() && isPressed) {
+          registerOrUnRegister(KC_5,true);
+          return false;
+        } else {
+          registerOrUnRegister(KC_5,false);
+        }
         break;
     case KC_AT: // backslash
-        if (isShifted()) {
+        if (isShifted() && isPressed) {
           del_mods(MOD_BIT(KC_LSFT));
-          registerOrUnRegister(KC_BSLS,isPressed);
+          registerOrUnRegister(KC_BSLS, true);
           add_mods(MOD_BIT(KC_LSFT));
           return false;
+        } else {
+          registerOrUnRegister(KC_BSLS, false);
         }
         break;
     case KC_PLUS: // $
@@ -406,8 +413,13 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
         }
         break;
     case KC_AMPR: // |
-        if (isShifted()) { registerOrUnRegister(KC_PIPE,isPressed); return false; }
-        return true;
+        if (isShifted() && isPressed) {
+          registerOrUnRegister(KC_PIPE, true);
+          return false;
+        } else {
+          registerOrUnRegister(KC_PIPE, false);
+        }
+        break;
     case KC_KP_4:
     case KC_KP_6:
         if (isControl()) {
