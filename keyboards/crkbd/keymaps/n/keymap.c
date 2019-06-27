@@ -357,27 +357,33 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
       break;
 
     case KC_RPRN: // >
-        if (isShifted()) { registerOrUnRegister(KC_DOT,isPressed); return false; }
+        if (isShifted() && isPressed) { registerOrUnRegister(KC_DOT, true); return false; }
+        else { registerOrUnRegister(KC_DOT, false); }
        break;
     case KC_LPRN: // <
-      if (isShifted()) { registerOrUnRegister(KC_COMMA,isPressed); return false; }
+      if (isShifted() && isPressed) { registerOrUnRegister(KC_COMMA, true); return false; }
+      else { registerOrUnRegister(KC_COMMA, false); }
        break;
 
     case KC_LCBR: // [
-      if (isShifted()) {
+      if (isShifted() && isPressed) {
         isPressed ? del_mods(MOD_BIT(KC_LSFT)) : 0;
-        registerOrUnRegister(KC_LBRACKET,isPressed);
+        registerOrUnRegister(KC_LBRACKET, true);
         add_mods(MOD_BIT(KC_LSFT));
         return false;
+      } else {
+        registerOrUnRegister(KC_LBRACKET, false);
       }
       break;
 
     case KC_RCBR: // ]
-      if (isShifted()) {
+      if (isShifted() && isPressed) {
         isPressed ? del_mods(MOD_BIT(KC_LSFT)) : 0;
-        registerOrUnRegister(KC_RBRACKET,isPressed);
+        registerOrUnRegister(KC_RBRACKET, true);
         add_mods(MOD_BIT(KC_LSFT));
         return false;
+      } else {
+        registerOrUnRegister(KC_RBRACKET, false);
       }
       break;
     case KC_QUOTE: // %
@@ -407,9 +413,11 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
         }
         break;
     case KC_HASH: // ^
-        if (isShifted()) {
-          registerOrUnRegister(KC_CIRC,isPressed);
+        if (isShifted() && isPressed) {
+          registerOrUnRegister(KC_CIRC, true);
           return false;
+        } else {
+          registerOrUnRegister(KC_CIRC, false);
         }
         break;
     case KC_AMPR: // |
