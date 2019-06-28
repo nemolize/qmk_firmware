@@ -99,7 +99,13 @@ ifeq ($(strip $(KEYBOARD_SHARED_EP)), yes)
 endif
 
 ifeq ($(strip $(MOUSEKEY_ENABLE)), yes)
-    TMK_COMMON_SRC += $(COMMON_DIR)/mousekey.c
+
+    ifeq ($(strip $(MOUSEKEY_PHYSICS_ENABLE)), yes)
+        TMK_COMMON_SRC += $(COMMON_DIR)/mousekey_physics.c
+    else
+        TMK_COMMON_SRC += $(COMMON_DIR)/mousekey.c
+    endif
+
     TMK_COMMON_DEFS += -DMOUSEKEY_ENABLE
     TMK_COMMON_DEFS += -DMOUSE_ENABLE
 
