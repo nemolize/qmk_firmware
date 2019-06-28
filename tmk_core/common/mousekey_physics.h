@@ -17,6 +17,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+typedef struct vector {
+  float x;
+  float y;
+} vector_t;
+
+typedef struct physics_state {
+  vector_t accel;
+  vector_t velocity;
+} physics_state_t;
+
+typedef struct physics_config {
+  float force;
+  float mass;
+  float friction;
+} physics_config_t;
+
 #ifndef MOUSEKEY_FRAMERATE
 #define MOUSEKEY_FRAMERATE 60.0
 #endif

@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Jun Wako <wakojun@gmail.com>
+Copyright 2019 Masaru Nemoto <nemolize@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,33 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "mousekey_physics.h"
 
-typedef struct vector {
-  float x;
-  float y;
-} vector_t;
-
 static report_mouse_t mouse_report = {};
-
-typedef struct physics_state {
-  vector_t accel;
-  vector_t velocity;
-} physics_state_t;
 
 physics_state_t move_state  = {{0, 0}, {0, 0}};
 physics_state_t wheel_state = {{0, 0}, {0, 0}};
-
-static void mousekey_debug(void);
 
 static uint16_t last_timer = 0;
 const float     gravity    = MOUSEKEY_GRAVITY;
 const float     dt         = 1.0 / MOUSEKEY_FRAMERATE;
 const float     interval   = 1000.0 / MOUSEKEY_FRAMERATE;
-
-typedef struct physics_config {
-  float force;
-  float mass;
-  float friction;
-} physics_config_t;
 
 const physics_config_t move  = {.force = MOUSEKEY_CURSOR_FORCE, .mass = MOUSEKEY_CURSOR_MASS, .friction = MOUSEKEY_CURSOR_FRICTION};
 const physics_config_t wheel = {.force = MOUSEKEY_WHEEL_FORCE, .mass = MOUSEKEY_WHEEL_MASS, .friction = MOUSEKEY_WHEEL_FRICTION};
@@ -127,6 +109,16 @@ void mousekey_off(uint8_t code) {
   else if (code == KC_MS_BTN5) mouse_report.buttons &= ~MOUSE_BTN5;
 }
 
+void mousekey_debug(void) {
+  if (!debug_mouse) return;
+  print("mousekey [btn|x y v h](rep/acl): [");
+  phex(mouse_report.buttons); print("|");
+  print_decs(mouse_report.x); print(" ");
+  print_decs(mouse_report.y); print(" ");
+  print_decs(mouse_report.v); print(" ");
+  print_decs(mouse_report.h); print("](");
+}
+
 void mousekey_send(void) {
   mousekey_debug();
   host_mouse_send(&mouse_report);
@@ -135,14 +127,4 @@ void mousekey_send(void) {
 
 void mousekey_clear(void) {
   mouse_report = (report_mouse_t){};
-}
-
-static void mousekey_debug(void) {
-  if (!debug_mouse) return;
-  print("mousekey [btn|x y v h](rep/acl): [");
-  phex(mouse_report.buttons); print("|");
-  print_decs(mouse_report.x); print(" ");
-  print_decs(mouse_report.y); print(" ");
-  print_decs(mouse_report.v); print(" ");
-  print_decs(mouse_report.h); print("](");
 }
