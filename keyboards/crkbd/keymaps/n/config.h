@@ -25,7 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Select hand configuration */
 
+#if !(MASTER_LEFT || MASTER_RIGHT || EE_HANDS)
 #define MASTER_LEFT
+#endif
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
