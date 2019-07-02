@@ -17,9 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <math.h>
+
+typedef int FIXED_POINT_NUMBER;
+
+#define FIXED_POINT_SIZE 6
+#define CONVERT_FROM_FLOAT(fval) ((int)round(fval * (1<<FIXED_POINT_SIZE)))
+#define CONVERT_TO_INT(fval) (fval >> FIXED_POINT_SIZE)
+#define FPN_MUL(fval1, fval2) ((fval1 * fval2) >> FIXED_POINT_SIZE)
+#define FPN_DIV(fval1, fval2) ((fval1 << FIXED_POINT_SIZE) / fval2)
+
 typedef struct vector {
-  float x;
-  float y;
+  FIXED_POINT_NUMBER x;
+  FIXED_POINT_NUMBER y;
 } vector_t;
 
 typedef struct physics_state {
@@ -28,9 +38,9 @@ typedef struct physics_state {
 } physics_state_t;
 
 typedef struct physics_config {
-  float force;
-  float mass;
-  float friction;
+  FIXED_POINT_NUMBER force;
+  FIXED_POINT_NUMBER mass;
+  FIXED_POINT_NUMBER friction;
 } physics_config_t;
 
 #ifndef MOUSEKEY_FRAMERATE
@@ -52,11 +62,18 @@ typedef struct physics_config {
 #define MOUSEKEY_WHEEL_FORCE 3
 #endif
 #ifndef MOUSEKEY_WHEEL_MASS
-#define MOUSEKEY_WHEEL_MASS .2
+#define MOUSEKEY_WHEEL_MASS 1
 #endif
 #ifndef MOUSEKEY_WHEEL_FRICTION
 #define MOUSEKEY_WHEEL_FRICTION 5
 #endif
+
+#define MOUSEKEY_DT (1.0 / MOUSEKEY_FRAMERATE)
+#define MOUSEKEY_CURSOR_FRICTION_MUL_DT_GRAVITY_MASS (MOUSEKEY_CURSOR_FRICTION * MOUSEKEY_GRAVITY * MOUSEKEY_DT * (float)MOUSEKEY_CURSOR_MASS)
+#define MOUSEKEY_WHEEL_FRICTION_MUL_DT_GRAVITY_MASS (MOUSEKEY_WHEEL_FRICTION * MOUSEKEY_GRAVITY * MOUSEKEY_DT * (float)MOUSEKEY_CURSOR_MASS)
+static const FIXED_POINT_NUMBER interval = (int)(1000 / MOUSEKEY_FRAMERATE);
+#define MOUSEKEY_CURSOR_DT_DIV_MASS CONVERT_FROM_FLOAT(MOUSEKEY_DT / MOUSEKEY_CURSOR_MASS)
+#define MOUSEKEY_WHEEL_DT_DIV_MASS CONVERT_FROM_FLOAT(MOUSEKEY_DT / MOUSEKEY_WHEEL_MASS)
 
 #ifdef __cplusplus
 extern "C" {

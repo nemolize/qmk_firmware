@@ -29,17 +29,22 @@ physics_state_t move_state  = {{0, 0}, {0, 0}};
 physics_state_t wheel_state = {{0, 0}, {0, 0}};
 
 static uint16_t last_timer = 0;
-const float     gravity    = MOUSEKEY_GRAVITY;
-const float     dt         = 1.0 / MOUSEKEY_FRAMERATE;
-const float     interval   = 1000.0 / MOUSEKEY_FRAMERATE;
 
-const physics_config_t move  = {.force = MOUSEKEY_CURSOR_FORCE, .mass = MOUSEKEY_CURSOR_MASS, .friction = MOUSEKEY_CURSOR_FRICTION};
-const physics_config_t wheel = {.force = MOUSEKEY_WHEEL_FORCE, .mass = MOUSEKEY_WHEEL_MASS, .friction = MOUSEKEY_WHEEL_FRICTION};
+const physics_config_t move  = {
+    .force = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_FORCE),
+    .mass = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_MASS),
+    .friction = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_FRICTION_MUL_DT_GRAVITY_MASS)
+};
+const physics_config_t wheel = {
+    .force = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_FORCE),
+    .mass = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_MASS),
+    .friction = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_FRICTION_MUL_DT_GRAVITY_MASS)
+};
 
-float apply_friction_1d(const physics_config_t *conf, float velocity) {
-  const int sign = velocity == 0 ? 0 : (0 < velocity ? 1 : -1);
-  velocity -= sign * (conf->mass) * gravity * (conf->friction) * dt;
-  const int afterSign = velocity == 0 ? 0 : (0 < velocity ? 1 : -1);
+FIXED_POINT_NUMBER apply_friction_1d(const physics_config_t *conf, FIXED_POINT_NUMBER velocity) {
+  const int sign = (velocity > 0) - (velocity < 0);
+  velocity -= sign * conf->friction; //
+  const int afterSign = (velocity > 0) - (velocity < 0);
   if (sign != afterSign) {
     velocity = 0;
   }
@@ -56,20 +61,20 @@ void mousekey_task(void) {
 
   // move
   {
-    move_state.velocity.x += (move_state.accel.x / move.mass) * dt;  // a = F/m
-    move_state.velocity.y += (move_state.accel.y / move.mass) * dt;
+    move_state.velocity.x += FPN_MUL(move_state.accel.x , MOUSEKEY_CURSOR_DT_DIV_MASS);  // v=at, a = F/m
+    move_state.velocity.y += FPN_MUL(move_state.accel.y , MOUSEKEY_CURSOR_DT_DIV_MASS);
     apply_friction_2d(&move, &move_state.velocity);
-    mouse_report.x = move_state.velocity.x;
-    mouse_report.y = move_state.velocity.y;
+    mouse_report.x = CONVERT_TO_INT(move_state.velocity.x);
+    mouse_report.y = CONVERT_TO_INT(move_state.velocity.y);
   }
 
   // wheel
   {
-    wheel_state.velocity.x += (wheel_state.accel.x / wheel.mass) * dt;  // a = F/m
-    wheel_state.velocity.y += (wheel_state.accel.y / wheel.mass) * dt;
+    wheel_state.velocity.x += FPN_MUL(wheel_state.accel.x, MOUSEKEY_WHEEL_DT_DIV_MASS);  // a = F/m
+    wheel_state.velocity.y += FPN_MUL(wheel_state.accel.y, MOUSEKEY_WHEEL_DT_DIV_MASS);
     apply_friction_2d(&wheel, &wheel_state.velocity);
-    mouse_report.h = wheel_state.velocity.x;
-    mouse_report.v = wheel_state.velocity.y;
+    mouse_report.h = CONVERT_TO_INT(wheel_state.velocity.x);
+    mouse_report.v = CONVERT_TO_INT(wheel_state.velocity.y);
   }
 
   if (mouse_report.x == 0 && mouse_report.y == 0 && mouse_report.v == 0 && mouse_report.h == 0) return;
