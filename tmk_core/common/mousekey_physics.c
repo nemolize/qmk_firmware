@@ -31,14 +31,14 @@ physics_state_t wheel_state = {{0, 0}, {0, 0}};
 static uint16_t last_timer = 0;
 
 const physics_config_t move  = {
-    .force = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_FORCE),
-    .mass = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_MASS),
-    .friction = CONVERT_FROM_FLOAT(MOUSEKEY_CURSOR_FRICTION_MUL_DT_GRAVITY_MASS)
+    .force = FLOAT_TO_FPN(MOUSEKEY_CURSOR_FORCE),
+    .mass = FLOAT_TO_FPN(MOUSEKEY_CURSOR_MASS),
+    .friction = FLOAT_TO_FPN(MOUSEKEY_CURSOR_FRICTION_MUL_DT_GRAVITY_MASS)
 };
 const physics_config_t wheel = {
-    .force = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_FORCE),
-    .mass = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_MASS),
-    .friction = CONVERT_FROM_FLOAT(MOUSEKEY_WHEEL_FRICTION_MUL_DT_GRAVITY_MASS)
+    .force = FLOAT_TO_FPN(MOUSEKEY_WHEEL_FORCE),
+    .mass = FLOAT_TO_FPN(MOUSEKEY_WHEEL_MASS),
+    .friction = FLOAT_TO_FPN(MOUSEKEY_WHEEL_FRICTION_MUL_DT_GRAVITY_MASS)
 };
 
 FIXED_POINT_NUMBER apply_friction_1d(const physics_config_t *conf, FIXED_POINT_NUMBER velocity) {
@@ -64,8 +64,8 @@ void mousekey_task(void) {
     move_state.velocity.x += FPN_MUL(move_state.accel.x , MOUSEKEY_CURSOR_DT_DIV_MASS);  // v=at, a = F/m
     move_state.velocity.y += FPN_MUL(move_state.accel.y , MOUSEKEY_CURSOR_DT_DIV_MASS);
     apply_friction_2d(&move, &move_state.velocity);
-    mouse_report.x = CONVERT_TO_INT(move_state.velocity.x);
-    mouse_report.y = CONVERT_TO_INT(move_state.velocity.y);
+    mouse_report.x = FPN_TO_INT(move_state.velocity.x);
+    mouse_report.y = FPN_TO_INT(move_state.velocity.y);
   }
 
   // wheel
@@ -73,8 +73,8 @@ void mousekey_task(void) {
     wheel_state.velocity.x += FPN_MUL(wheel_state.accel.x, MOUSEKEY_WHEEL_DT_DIV_MASS);  // a = F/m
     wheel_state.velocity.y += FPN_MUL(wheel_state.accel.y, MOUSEKEY_WHEEL_DT_DIV_MASS);
     apply_friction_2d(&wheel, &wheel_state.velocity);
-    mouse_report.h = CONVERT_TO_INT(wheel_state.velocity.x);
-    mouse_report.v = CONVERT_TO_INT(wheel_state.velocity.y);
+    mouse_report.h = FPN_TO_INT(wheel_state.velocity.x);
+    mouse_report.v = FPN_TO_INT(wheel_state.velocity.y);
   }
 
   if (mouse_report.x == 0 && mouse_report.y == 0 && mouse_report.v == 0 && mouse_report.h == 0) return;
