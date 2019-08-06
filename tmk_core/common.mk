@@ -101,7 +101,7 @@ endif
 ifeq ($(strip $(MOUSEKEY_ENABLE)), yes)
 
     ifeq ($(strip $(MOUSEKEY_PHYSICS_ENABLE)), yes)
-        TMK_COMMON_SRC += $(COMMON_DIR)/mousekey_physics.c
+        TMK_COMMON_SRC += $(COMMON_DIR)/mousekey_physics.cpp
     else
         TMK_COMMON_SRC += $(COMMON_DIR)/mousekey.c
     endif

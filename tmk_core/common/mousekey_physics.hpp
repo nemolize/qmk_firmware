@@ -18,30 +18,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include <math.h>
+#include <stdint.h>
 
 typedef int FIXED_POINT_NUMBER;
 
 #define FIXED_POINT_SIZE 6
-#define FLOAT_TO_FPN(fval) ((FIXED_POINT_NUMBER)round(fval * (1<<FIXED_POINT_SIZE)))
+#define FLOAT_TO_FPN(fval) ((FIXED_POINT_NUMBER)round(fval * (1 << FIXED_POINT_SIZE)))
 #define FPN_TO_INT(fval) (fval >> FIXED_POINT_SIZE)
 #define FPN_MUL(fval1, fval2) ((fval1 * fval2) >> FIXED_POINT_SIZE)
 #define FPN_DIV(fval1, fval2) ((fval1 << FIXED_POINT_SIZE) / fval2)
 
-typedef struct vector {
-  FIXED_POINT_NUMBER x;
-  FIXED_POINT_NUMBER y;
-} vector_t;
+struct Vector {
+  FIXED_POINT_NUMBER x, y;
+  Vector() : x(0), y(0) {}
+};
 
-typedef struct physics_state {
-  vector_t accel;
-  vector_t velocity;
-} physics_state_t;
+struct PhysicsConfig {
+  FIXED_POINT_NUMBER force, mass, friction, dtDivMath;
+  PhysicsConfig(
+    float force,
+    float mass,
+    float friction,
+    float dt
+  ):
+    force(FLOAT_TO_FPN(force)),
+    mass(FLOAT_TO_FPN(mass)),
+    friction(FLOAT_TO_FPN(friction)),
+    dtDivMath(FLOAT_TO_FPN(dt/mass))
+  {};
+};
 
-typedef struct physics_config {
-  FIXED_POINT_NUMBER force;
-  FIXED_POINT_NUMBER mass;
-  FIXED_POINT_NUMBER friction;
-} physics_config_t;
+struct PhysicsState {
+public:
+  PhysicsState(PhysicsConfig config) : accel(), velocity(), config(config) {}
+  void advance(){
+    velocity.x += FPN_MUL(accel.x, config.dtDivMath);  // v=at, a = F/m
+    velocity.y += FPN_MUL(accel.y, config.dtDivMath);
+    apply_friction_2d(config, velocity);
+  }
+  const Vector& getPosition() {
+    return velocity;
+  }
+
+  Vector accel;
+  Vector velocity;
+private:
+  PhysicsConfig config;
+  void apply_friction_2d(const PhysicsConfig &conf, Vector &velocity) {
+    velocity.x = apply_friction_1d(conf, velocity.x);
+    velocity.y = apply_friction_1d(conf, velocity.y);
+  }
+  FIXED_POINT_NUMBER apply_friction_1d(
+    const PhysicsConfig &conf,
+    FIXED_POINT_NUMBER velocity
+  ) {
+    const auto sign = (velocity > 0) - (velocity < 0);
+    velocity -= sign * conf.friction;  //
+    const auto afterSign = (velocity > 0) - (velocity < 0);
+    return sign != afterSign? 0 : velocity;
+  }
+};
 
 #ifndef MOUSEKEY_FRAMERATE
 #define MOUSEKEY_FRAMERATE 60.0
