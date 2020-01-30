@@ -72,6 +72,7 @@ enum custom_keycodes {
 #define KC_CR KC_RIGHT
 #define KC_PU KC_PGUP
 #define KC_PD KC_PGDN
+#define KC_MCTL LCA(KC_F3)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [L_DEFAULT] = LAYOUT_kc( \
@@ -90,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC, XXXXX, XXXXX,  MS_U, XXXXX, XXXXX,                  XXXXX,  AMPR,  RPRN,   GRV,  ASTR,  QUES,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB, XXXXX,  MS_L,  MS_D,  MS_R, MS_BTN3,                QUOTE,  LPRN,  LCBR,  RCBR,   EQL,  UNDS,\
+       MCTL, XXXXX,  MS_L,  MS_D,  MS_R, MS_BTN3,                QUOTE,  LPRN,  LCBR,  RCBR,   EQL,  UNDS,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,   BTN2,  WH_D, WH_U,  BTN1, XXXXX,                     AT,   DQT,  PLUS,  HASH,  EXLM, XXXXX,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
