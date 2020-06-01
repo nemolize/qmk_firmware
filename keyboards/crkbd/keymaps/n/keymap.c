@@ -34,19 +34,20 @@ enum layers {
 
 enum custom_keycodes {
   DEFAULT = SAFE_RANGE,
-  XLR,
+  XLL,
   XLM,
+  XLR,
   XRL,
   XRM,
   XRR,
   BACKLIT,
-  RGBRST
+  RGBRST,
 };
 
 #define KC______ KC_TRNS
 #define KC_XXXXX KC_NO
 
-#define KC_XLL KC_LALT
+#define KC_XLL XLL //LALT_T(NF13)
 #define KC_XLM XLM //LT(L_XLM, KC_SPACE)
 #define KC_XLR MT(MOD_LGUI, KC_LANG2)
 #define KC_XRL MT(MOD_RGUI, KC_LANG1)
@@ -278,6 +279,8 @@ bool isControl(void) {
  return get_mods() & (MOD_BIT(KC_LCTRL) | MOD_BIT(KC_RCTRL));
 }
 
+#define modified(mod_bit) (get_mods() & (mod_bit))
+
 void registerOrUnRegister(uint16_t keycode, bool isRegister){
   isRegister ? register_code(keycode) : unregister_code(keycode);
 }
@@ -293,7 +296,16 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-
+    case KC_XLL:
+      if (isOneShot()) {
+          add_mods(MOD_BIT(KC_LALT));
+          registerOrUnRegister(KC_F13, true);
+          registerOrUnRegister(KC_F13, false);
+          del_mods(MOD_BIT(KC_LALT));
+      } else {
+          registerOrUnRegister(KC_LALT, isPressed);
+      }
+      return false;
     case KC_XLM:
       record->event.pressed ? layer_on_if_need(L_XLM) : layer_off_if_need(L_XLM);
       update_tri_layer_RGB(L_XRM, L_XLM, L_XLM_XRM);
