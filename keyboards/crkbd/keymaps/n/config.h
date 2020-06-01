@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOUSEKEY_FRAMERATE 144
 #define MOUSEKEY_CURSOR_FORCE 412
 #define MOUSEKEY_CURSOR_MASS 1
-#define MOUSEKEY_CURSOR_FRICTION 32
+#define MOUSEKEY_CURSOR_FRICTION 33
 #define MOUSEKEY_WHEEL_FORCE 48
 #define MOUSEKEY_WHEEL_MASS 1
 #define MOUSEKEY_WHEEL_FRICTION 4
