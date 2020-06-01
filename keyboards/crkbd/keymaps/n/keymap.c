@@ -338,16 +338,6 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
     case KC_XRL:
         record->event.pressed ? layer_on_if_need(L_XRL) : layer_off_if_need(L_XRL);
         break;
-//    case KC_XRR:
-//      record->event.pressed ? layer_on_if_need(L_XRR) : layer_off_if_need(L_XRR);
-//      update_tri_layer_RGB(L_XLM, L_XRM, L_XLM_XRM);
-//      return false;
-//      break;
-//    case KC_XLM_XRM:
-//        record->event.pressed ? layer_on(L_XLM_XRM) : layer_off(L_XLM_XRM);
-//        update_tri_layer_RGB(L_XLM, L_XRM, L_XLM_XRM);
-//      return false;
-//      break;
     case RGB_MOD:
       #ifdef RGBLIGHT_ENABLE
         if (record->event.pressed) {
@@ -463,21 +453,6 @@ bool process_record_user_wrapped(uint16_t keycode, keyrecord_t *record) {
           return false;
         }
         break;
-//    case KC_CTLTB:
-//        if (IS_LAYER_ON(L_XLM) && isOneShot() && !isPressed) {
-//          registerOrUnRegister(KC_LALT, true);
-//          registerOrUnRegister(KC_F3, true);
-//          registerOrUnRegister(KC_F3, false);
-//          registerOrUnRegister(KC_LALT, false);
-//          registerOrUnRegister(KC_LCTRL, false);
-//          return false;
-//        } else if (IS_LAYER_ON(L_XLR) && isOneShot() && !isPressed) {
-//          add_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
-//          registerOrUnRegister(KC_TAB, true);
-//          registerOrUnRegister(KC_TAB, false);
-//          del_mods(MOD_BIT(KC_LGUI)|MOD_BIT(KC_LCTRL));
-//          return false;
-//        }
   }
   return true;
 }
