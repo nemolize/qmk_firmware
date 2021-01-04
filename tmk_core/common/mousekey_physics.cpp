@@ -32,26 +32,36 @@ const PhysicsConfig wheel(MOUSEKEY_WHEEL_FORCE, MOUSEKEY_WHEEL_MASS, MOUSEKEY_WH
 PhysicsState move_state(move);
 PhysicsState wheel_state(wheel);
 
-void mousekey_task(void) {
-  if (timer_elapsed(last_timer) < interval) return;
+void mousekey_task_cursor() {
+    if (timer_elapsed(last_timer) < interval) return;
 
-  // move
-  {
+    // move
     move_state.advance();
     mouse_report.x = FPN_TO_INT(move_state.getPosition().x);
     mouse_report.y = FPN_TO_INT(move_state.getPosition().y);
-  }
+}
 
-  // wheel
-  {
+void mousekey_task_wheel() {
+    if (timer_elapsed(last_timer) < interval_wheel) return;
+
     wheel_state.advance();
     mouse_report.h = FPN_TO_INT(wheel_state.getPosition().x);
     mouse_report.v = FPN_TO_INT(wheel_state.getPosition().y);
-  }
+}
 
-  if (mouse_report.x == 0 && mouse_report.y == 0 && mouse_report.v == 0 && mouse_report.h == 0) return;
+void mousekey_task(void) {
 
-  mousekey_send();
+    mouse_report.x = 0;
+    mouse_report.y = 0;
+    mouse_report.h = 0;
+    mouse_report.v = 0;
+
+    mousekey_task_cursor();
+    mousekey_task_wheel();
+
+    if (mouse_report.x == 0 && mouse_report.y == 0 && mouse_report.v == 0 && mouse_report.h == 0) return;
+
+    mousekey_send();
 }
 
 void mousekey_on(uint8_t code) {
