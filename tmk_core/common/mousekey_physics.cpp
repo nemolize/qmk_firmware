@@ -24,7 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mousekey_physics.hpp"
 
 static report_mouse_t mouse_report = {};
-static uint16_t       last_timer   = 0;
+static uint16_t last_timer_c = 0;
+static uint16_t last_timer_w = 0;
 
 const PhysicsConfig move(MOUSEKEY_CURSOR_FORCE, MOUSEKEY_CURSOR_MASS, MOUSEKEY_CURSOR_FRICTION_MUL_DT_GRAVITY_MASS, MOUSEKEY_DT);
 const PhysicsConfig wheel(MOUSEKEY_WHEEL_FORCE, MOUSEKEY_WHEEL_MASS, MOUSEKEY_WHEEL_FRICTION_MUL_DT_GRAVITY_MASS, MOUSEKEY_DT);
@@ -33,35 +34,31 @@ PhysicsState move_state(move);
 PhysicsState wheel_state(wheel);
 
 void mousekey_task_cursor() {
-    if (timer_elapsed(last_timer) < interval) return;
+    mouse_report.x = 0;
+    mouse_report.y = 0;
 
-    // move
+    if (timer_elapsed(last_timer_c) < interval) return;
+
     move_state.advance();
     mouse_report.x = FPN_TO_INT(move_state.getPosition().x);
     mouse_report.y = FPN_TO_INT(move_state.getPosition().y);
 }
 
 void mousekey_task_wheel() {
-    if (timer_elapsed(last_timer) < interval_wheel) return;
-
-    wheel_state.advance();
-    mouse_report.h = FPN_TO_INT(wheel_state.getPosition().x);
-    mouse_report.v = FPN_TO_INT(wheel_state.getPosition().y);
-}
-
-void mousekey_task(void) {
-
-    mouse_report.x = 0;
-    mouse_report.y = 0;
     mouse_report.h = 0;
     mouse_report.v = 0;
 
+    if (timer_elapsed(last_timer_w) < interval_wheel) return;
+
+    mouse_report.h = FPN_TO_INT(wheel_state.accel.x);
+    mouse_report.v = FPN_TO_INT(wheel_state.accel.y);
+}
+
+void mousekey_task(void) {
     mousekey_task_cursor();
     mousekey_task_wheel();
 
-    if (mouse_report.x == 0 && mouse_report.y == 0 && mouse_report.v == 0 && mouse_report.h == 0) return;
-
-    mousekey_send();
+    if (mouse_report.x || mouse_report.y || mouse_report.v || mouse_report.h) mousekey_send();
 }
 
 void mousekey_on(uint8_t code) {
@@ -109,7 +106,9 @@ void mousekey_debug(void) {
 void mousekey_send(void) {
   mousekey_debug();
   host_mouse_send(&mouse_report);
-  last_timer = timer_read();
+  const uint16_t last_timer = timer_read();
+  if (mouse_report.x || mouse_report.y) last_timer_c = last_timer;
+  if (mouse_report.v || mouse_report.h) last_timer_w = last_timer;
 }
 
 void mousekey_clear(void) {
